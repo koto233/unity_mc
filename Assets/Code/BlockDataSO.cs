@@ -4,7 +4,7 @@ using UnityEngine;
 
 // 决定每个 Block 的纹理配置信息
 [CreateAssetMenu(fileName = "BlockData", menuName = "Data/Block Data")]
-public class BlockData : ScriptableObject
+public class BlockDataSO : ScriptableObject
 {
     [Header("Texture Settings")]
     [Tooltip("单个纹理在纹理图集上的尺寸 (单位:像素)")]

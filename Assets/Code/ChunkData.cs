@@ -8,7 +8,7 @@ public class ChunkData
     /// <summary>
     /// 区块里的方块
     /// </summary>
-    public BlockType[] Blocks;
+    public Block[] Blocks;
 
     /// <summary>
     /// 区块尺寸
@@ -23,17 +23,28 @@ public class ChunkData
     /// <summary>
     /// 区块位置
     /// </summary>
-    public Vector3Int ChunkPosition;
+    public Vector3Int Position;
 
     public ChunkData(int chunkSize, int chunkHeight, Vector3Int chunkPosition)
     {
         this.ChunkSize = chunkSize;
         this.ChunkHeight = chunkHeight;
-        this.ChunkPosition = chunkPosition;
-        Blocks = new BlockType[ChunkSize * ChunkHeight * ChunkSize];
+        this.Position = chunkPosition;
+        Blocks = new Block[ChunkSize * ChunkHeight * ChunkSize];
     }
 }
 
+
+public class Block
+{
+    public BlockType blockType;
+    public Vector3 position;
+    public Block(BlockType blockType, Vector3 position)
+    {
+        this.blockType = blockType;
+        this.position = position;
+    }
+}
 public enum BlockType
 {
     /// <summary>

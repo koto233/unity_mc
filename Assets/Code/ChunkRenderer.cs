@@ -15,7 +15,6 @@ public class ChunkRenderer : MonoBehaviour
     private MeshFilter _meshFilter;
     private MeshCollider _meshCollider;
     private Mesh _mesh;
-    public bool showGizmo = false;
 
     public ChunkData ChunkData { get; private set; } //该脚本挂载的物体用来接受数据
 
@@ -58,11 +57,6 @@ public class ChunkRenderer : MonoBehaviour
         _meshCollider.sharedMesh = collisionMesh;
     }
 
-    //公共方法来执行上面的RenderMesh
-    public void UpdateChunk()
-    {
-        // RenderMesh(Chunk.GetChunkMeshData(ChunkData));
-    }
 
     public void UpdateChunk(MeshData data)
     {
