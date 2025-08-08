@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
@@ -28,12 +29,15 @@ public class World : MonoBehaviour, IController
     private void Start()
     {
         ResKit.Init();
+        StartCoroutine(GenerateWorld());
         GenerateWorld();
     }
+
+
     /// <summary>
     /// 生成世界
     /// </summary>
-    public void GenerateWorld()
+    public IEnumerator GenerateWorld()
     {
         var blockModel = this.GetModel<BlockTextureModel>();
         _chunksData.Clear();
@@ -47,23 +51,27 @@ public class World : MonoBehaviour, IController
         {
             for (int z = 0; z < MapSize; z++)
             {
-                var chunkData = new ChunkData(ChunkSize, ChunkHeight, new Vector3Int(x, 0, z));
+                var chunkData = new ChunkData(ChunkSize, ChunkHeight, new Vector3Int(x * ChunkSize, 0, z * ChunkSize));
                 GenerateBlock(chunkData);
                 _chunksData.Add(chunkData.Position, chunkData);
-                GameObject chunkObject = Instantiate(ChunkPrefab, chunkData.Position, Quaternion.identity);
+                Debug.Log($"生成区块{chunkData.Position}");
+                yield return new WaitForEndOfFrame();
                 // bool isMainMesh = blockType == BlockType.Water ? false : true;
-                MeshData meshData = new MeshData(true);
-                foreach (var block in chunkData.Blocks)
-                {
-                    BlockHelper.SetMeshData(meshData, block, blockModel);
-                }
-                ChunkRenderer chunkRenderer = chunkObject.GetComponent<ChunkRenderer>();
-                Debug.Log($"区块位置{chunkData.Position} + 方块类型{chunkRenderer}");
-                _chunksInstances.Add(chunkData.Position, chunkRenderer);
-                chunkRenderer.InitializeChunk(chunkData);
-                chunkRenderer.UpdateChunk(meshData);
             }
         }
+
+        foreach (var chunk in _chunksData.Values)
+        {
+            GameObject chunkObject = Instantiate(ChunkPrefab, new Vector3(chunk.Position.x, 0, chunk.Position.z), Quaternion.identity);
+            MeshData meshData = new MeshData(true);
+            BlockHelper.SetMeshData(chunk, meshData, blockModel, _chunksData);
+            ChunkRenderer chunkRenderer = chunkObject.GetComponent<ChunkRenderer>();
+            _chunksInstances.Add(chunk.Position, chunkRenderer);
+            chunkRenderer.InitializeChunk(chunk);
+            chunkRenderer.UpdateChunk(meshData);
+            yield return new WaitForEndOfFrame();
+        }
+
     }
 
 
@@ -120,7 +128,8 @@ public class World : MonoBehaviour, IController
                     }
 
                     int index = x + ChunkSize * y + z * ChunkSize * ChunkHeight;
-                    chunkData.Blocks[index] = new Block(blockType, new Vector3(x, y, z)); // 创建方块
+                    chunkData.Blocks[index] = new Block(blockType, new Vector3Int(x, y, z)); // 创建方块
+                    // Debug.Log($"{index}方块位置{x}，{y}，{z}  创建成功");
                 }
             }
         }
@@ -130,4 +139,6 @@ public class World : MonoBehaviour, IController
     {
         return GameEntry.Interface;
     }
+
+
 }

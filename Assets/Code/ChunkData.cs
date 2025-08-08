@@ -38,8 +38,8 @@ public class ChunkData
 public class Block
 {
     public BlockType blockType;
-    public Vector3 position;
-    public Block(BlockType blockType, Vector3 position)
+    public Vector3Int position;
+    public Block(BlockType blockType, Vector3Int position)
     {
         this.blockType = blockType;
         this.position = position;
